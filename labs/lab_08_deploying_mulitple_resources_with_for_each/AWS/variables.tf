@@ -27,3 +27,35 @@ variable "sg_ports" {
   type        = list(number)
   default     = [80, 8080, 3306]
 }
+
+# New map variables for for_each
+variable "subnet_config" {
+  description = "Map of subnet configurations"
+  type        = map(string)
+  default = {
+    "public"   = "10.0.10.0/24"
+    "private1" = "10.0.20.0/24"
+    "private2" = "10.0.30.0/24"
+  }
+}
+
+variable "subnet_azs" {
+  description = "Map of subnet availability zones"
+  type        = map(string)
+  default = {
+    "public"   = "us-east-1a"
+    "private1" = "us-east-1b"
+    "private2" = "us-east-1c"
+  }
+}
+
+variable "security_group_config" {
+  description = "Map of security group ports"
+  type        = map(number)
+  default = {
+    "web" = 80
+    "app" = 8080
+    "db"  = 3306
+  }
+}
+
