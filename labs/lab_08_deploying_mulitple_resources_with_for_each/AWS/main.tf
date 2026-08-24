@@ -10,18 +10,17 @@ resource "aws_vpc" "main" {
 }
 
 # Subnets created with count
-resource "aws_subnet" "subnet" {
-  count             = 3
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = var.subnet_cidr_blocks[count.index]
-  availability_zone = var.availability_zones[count.index]
-
-  tags = {
-    Name = "subnet-${count.index + 1}"
-    Tier = count.index < 1 ? "public" : "private"
-  }
-}
-
+#resource "aws_subnet" "subnet" {
+#  count             = 3
+#  vpc_id            = aws_vpc.main.id
+#  cidr_block        = var.subnet_cidr_blocks[count.index]
+#  availability_zone = var.availability_zones[count.index]
+#
+#  tags = {
+#    Name = "subnet-${count.index + 1}"
+#    Tier = count.index < 1 ? "public" : "private"
+#  }
+#}
 # Security groups created with count
 resource "aws_security_group" "sg" {
   count       = 3
@@ -43,4 +42,17 @@ resource "aws_security_group_rule" "ingress" {
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.sg[count.index].id
+}
+
+# Subnets created with for_each
+resource "aws_subnet" "subnet_foreach" {
+  for_each          = var.subnet_config
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = each.value
+  availability_zone = var.subnet_azs[each.key]
+
+  tags = {
+    Name = "subnet-${each.key}"
+    Tier = "standard"
+  }
 }
